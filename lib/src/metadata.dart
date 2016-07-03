@@ -2,6 +2,7 @@ library tavern.metadata;
 
 import 'package:barback/barback.dart';
 import 'package:yaml/yaml.dart';
+import 'package:path/path.dart' as path;
 import 'dart:async';
 import 'dart:convert';
 
@@ -58,12 +59,15 @@ MetadataOutput extractMetadata(String file) {
   return new MetadataOutput(yaml, lines.join('\n'));
 }
 
+String generateMetadataPath(String p) {
+  var dirname = path.dirname(p);
+  var basename = path.basenameWithoutExtension(p);
+  var filename = basename + '.metadata.json';
+  return path.join(dirname, filename);
+}
+
 class MetadataOutput {
   final Map<String, dynamic> metadata;
   final String content;
   MetadataOutput(this.metadata, this.content);
-}
-
-String generateMetadataPath(String path) {
-  return path + '.metadata';
 }

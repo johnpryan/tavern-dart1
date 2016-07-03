@@ -25,5 +25,11 @@ main() {
       var contents = file.readAsStringSync();
       expect(() => extractMetadata(contents), throws);
     });
+
+    test('generateMetadataPath', () {
+      var input = 'test/fixtures/foo.md';
+      var expected = 'test/fixtures/foo.metadata.json';
+      expect(generateMetadataPath(input), expected);
+    });
   });
 }

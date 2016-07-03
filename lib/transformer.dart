@@ -1,9 +1,6 @@
 library tavern;
 
 import 'package:barback/barback.dart';
-import 'package:markdown/markdown.dart';
-
-import 'dart:async';
 
 import 'package:tavern/src/contents.dart';
 import 'package:tavern/src/markdown.dart';
