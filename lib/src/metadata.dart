@@ -2,9 +2,9 @@ library tavern.metadata;
 
 import 'package:barback/barback.dart';
 import 'package:yaml/yaml.dart';
-import 'package:path/path.dart' as path;
 import 'dart:async';
 import 'dart:convert';
+import 'package:tavern/src/utils.dart';
 
 class Metadata extends Transformer {
   Metadata();
@@ -25,7 +25,7 @@ class Metadata extends Transformer {
     transform.addOutput(output);
 
     var package = transform.primaryInput.id.package;
-    var metadataPath = generateMetadataPath(transform.primaryInput.id.path);
+    var metadataPath = getMetadataPath(transform.primaryInput.id.path);
     var metadataId = new AssetId(package, metadataPath);
     var json = JSON.encode(metadata.metadata);
     transform.addOutput(new Asset.fromString(metadataId, json));
@@ -59,12 +59,7 @@ MetadataOutput extractMetadata(String file) {
   return new MetadataOutput(yaml, lines.join('\n'));
 }
 
-String generateMetadataPath(String p) {
-  var dirname = path.dirname(p);
-  var basename = path.basenameWithoutExtension(p);
-  var filename = basename + '.metadata.json';
-  return path.join(dirname, filename);
-}
+
 
 class MetadataOutput {
   final Map<String, dynamic> metadata;

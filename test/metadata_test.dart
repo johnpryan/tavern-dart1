@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 import 'package:tavern/src/metadata.dart';
+import 'package:tavern/src/utils.dart';
 import 'dart:io';
 
 main() {
@@ -29,7 +30,7 @@ main() {
     test('generateMetadataPath', () {
       var input = 'test/fixtures/foo.md';
       var expected = 'test/fixtures/foo.metadata.json';
-      expect(generateMetadataPath(input), expected);
+      expect(getMetadataPath(input), expected);
     });
   });
 }

@@ -3,6 +3,7 @@ description: a static site generator
 dependencies:
   barback: ^0.15.0
   markdown: ^0.10.0
-  yaml: any
+  mustache: ^0.2.0
+  yaml: ^2.1.0
 dev_dependencies:
   test: any

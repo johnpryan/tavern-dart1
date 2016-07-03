@@ -5,6 +5,7 @@ import 'package:barback/barback.dart';
 import 'package:tavern/src/contents.dart';
 import 'package:tavern/src/markdown.dart';
 import 'package:tavern/src/metadata.dart';
+import 'package:tavern/src/template.dart';
 
 class Tavern implements TransformerGroup {
   final Iterable<Iterable> phases;
@@ -14,8 +15,9 @@ class Tavern implements TransformerGroup {
 
 List<List<Transformer>> createPhases() {
   return [
-    [new Metadata()],
     [new Contents()],
+    [new Metadata()],
     [new Markdown()],
+    [new Template()],
   ];
 }
