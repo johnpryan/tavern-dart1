@@ -1,0 +1,6 @@
+name: tavern_simple
+dependencies:
+  tavern:
+    path: ../../
+transformers:
+- tavern

@@ -1,0 +1,4 @@
+name: tavern
+description: a static site generator
+dependencies:
+  barback: ^0.15.0
