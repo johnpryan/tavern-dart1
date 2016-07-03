@@ -1,3 +1,3 @@
 library tavern;
 
-export 'package:tavern/src/metadata.dart';
+export 'package:tavern/src/contents.dart';
