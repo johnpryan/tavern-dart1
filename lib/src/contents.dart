@@ -1,11 +1,11 @@
-library tavern.metadata;
+library tavern.content;
 
 import 'package:barback/barback.dart';
 import 'package:path/path.dart' as path;
 import 'dart:async';
 
-class ContentsTransformer extends Transformer {
-  ContentsTransformer.asPlugin();
+class Contents extends Transformer {
+  Contents();
 
   Future<bool> isPrimary(AssetId id) async =>
     id.path.startsWith('web/contents/');
@@ -21,6 +21,7 @@ class ContentsTransformer extends Transformer {
 
     var newId = new AssetId(package, newPath);
     var newAsset = new Asset.fromString(newId, content);
+    transform.consumePrimary();
     transform.addOutput(newAsset);
   }
 }
