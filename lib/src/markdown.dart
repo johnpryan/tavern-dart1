@@ -1,9 +1,9 @@
 library tavern.markdown;
 
+import 'dart:async';
+
 import 'package:barback/barback.dart';
 import 'package:markdown/markdown.dart';
-
-import 'dart:async';
 
 class Markdown extends Transformer {
   Markdown();

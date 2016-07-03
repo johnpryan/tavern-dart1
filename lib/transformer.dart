@@ -6,6 +6,7 @@ import 'package:tavern/src/contents.dart';
 import 'package:tavern/src/markdown.dart';
 import 'package:tavern/src/metadata.dart';
 import 'package:tavern/src/template.dart';
+import 'package:tavern/src/cleanup.dart';
 
 class Tavern implements TransformerGroup {
   final Iterable<Iterable> phases;
@@ -19,5 +20,6 @@ List<List<Transformer>> createPhases() {
     [new Metadata()],
     [new Markdown()],
     [new Template()],
+    [new Cleanup()],
   ];
 }

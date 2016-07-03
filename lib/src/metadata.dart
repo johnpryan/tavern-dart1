@@ -59,8 +59,6 @@ MetadataOutput extractMetadata(String file) {
   return new MetadataOutput(yaml, lines.join('\n'));
 }
 
-
-
 class MetadataOutput {
   final Map<String, dynamic> metadata;
   final String content;
