@@ -1,6 +1,8 @@
 name: tavern_simple
 dependencies:
+  browser: any
   tavern:
     path: ../../
 transformers:
 - tavern
+- $dart2js
