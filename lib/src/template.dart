@@ -18,7 +18,7 @@ class Template extends Transformer {
     var metadataPath = getMetadataPath(filePath);
     var package = transform.primaryInput.id.package;
     var metadataId = new AssetId(package, metadataPath);
-    
+
     if (await transform.hasInput(metadataId) == false) {
       transform.addOutput(transform.primaryInput);
       return;

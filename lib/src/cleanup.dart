@@ -14,7 +14,6 @@ class Cleanup extends Transformer {
   Future<bool> isPrimary(AssetId id) async {
     var isTemplate = id.path.startsWith(templatesPath) && id.extension == '.html';
     var isMetadata = path.basename(id.path).endsWith(metadataExtension);
-    print('isMetadata(${id.path}) = $isMetadata');
     return isTemplate || isMetadata;
   }
 }

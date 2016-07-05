@@ -1,7 +1,7 @@
 ---
 title: Hello World!
-layout: post
 category: Random
+tags: ['code', 'dart']
 template: post
 ---
 
