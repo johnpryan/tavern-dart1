@@ -4,6 +4,7 @@ import 'utils.dart';
 import 'dart:async';
 import 'package:barback/barback.dart';
 import 'dart:convert';
+import 'package:tavern/src/models.dart';
 
 const aggregateFilePath = "web/aggregate.tavern.json";
 
@@ -18,7 +19,7 @@ class MetadataAggregator extends AggregateTransformer {
     var aggregate = {};
     await for (var input in transform.primaryInputs) {
       var tags = aggregate['tags'] ?? [];
-      var tagSet = new Set<String>()..addAll(tags);
+      var tagSet = new Set<Tag>()..addAll(tags);
       var content = await input.readAsString();
       var contentMap = JSON.decode(content);
       tagSet.addAll(contentMap['tags'] ?? []);
