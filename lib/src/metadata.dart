@@ -14,7 +14,7 @@ class Metadata extends Transformer {
     var id = transform.primaryInput.id;
     var content = await transform.primaryInput.readAsString();
 
-    var metadata = extractMetadata(content);
+    var metadata = extractMetadata(content, transform.primaryInput.id.path);
     if (metadata == null) {
       transform.addOutput(new Asset.fromString(id, content));
       return;
@@ -32,7 +32,7 @@ class Metadata extends Transformer {
   }
 }
 
-MetadataOutput extractMetadata(String file) {
+MetadataOutput extractMetadata(String file, String path) {
   const separator = '---';
   var lines = file.split('\n');
   if (!lines.first.startsWith(separator)) return null;
@@ -55,8 +55,11 @@ MetadataOutput extractMetadata(String file) {
     throw ('unexpected metadata');
   }
 
+  var metadata = new Map.from(yaml);
+  metadata['url'] = getHtmlPath(path);
+
   lines.removeRange(first, last + 1);
-  return new MetadataOutput(yaml, lines.join('\n'));
+  return new MetadataOutput(metadata, lines.join('\n'));
 }
 
 class MetadataOutput {

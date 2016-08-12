@@ -11,3 +11,15 @@ String getMetadataPath(String p) {
   var filename = basename + metadataExtension;
   return path.join(dirname, filename);
 }
+
+String getHtmlPath(String p) {
+  // input path/to/file.txt
+  var dirname = path.dirname(p); // path/to/
+  var basename = path.basenameWithoutExtension(p); // file
+  var dirnamePath = path.split(dirname); // ['path', to']
+  var filename = basename + '.html';
+  var result = ['/'];
+  result.addAll(dirnamePath.sublist(1));
+  result.add(filename);
+  return path.joinAll(result);
+}

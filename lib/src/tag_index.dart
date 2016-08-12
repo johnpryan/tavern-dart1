@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:mustache/mustache.dart' as mustache;
 
-
 const outputFilePath = "web/tags/index.html";
 const templateFilePath = "web/templates/tag_index.html";
 const tagPath = "/tags";
@@ -14,7 +13,7 @@ class TagIndex extends AggregateTransformer {
   @override
   Future apply(AggregateTransform transform) async {
     var tags = new Set();
-    await for (var input in transform. primaryInputs) {
+    await for (var input in transform.primaryInputs) {
       var content = await input.readAsString();
       var contentMap = JSON.decode(content);
       tags.addAll(contentMap['tags'] ?? []);
