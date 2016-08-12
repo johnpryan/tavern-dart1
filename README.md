@@ -1,5 +1,5 @@
 
-![Tavern Logo](logo.png)
+<img src="logo.png" style="display: block;margin-left: auto;margin-right: auto"></img>
 
 A static site generator for blogs, written in Dart.
 
