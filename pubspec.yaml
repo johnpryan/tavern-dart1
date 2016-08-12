@@ -1,9 +1,12 @@
 name: tavern
 description: a static site generator
+version: 1.0.0
+author: John Ryan <john.p.ryan4@gmail.com>
+homepage: https://www.github.com/johnpryan/tavern
 dependencies:
-  barback: ^0.15.0
-  markdown: ^0.10.0
-  mustache: ^0.2.0
-  yaml: ^2.1.0
+  barback: '>=0.15.0 <0.16.0'
+  markdown: '>=0.10.0 <0.11.0'
+  mustache: '>=0.2.0 <0.3.0'
+  yaml: '>=2.1.0 <3.0.0'
 dev_dependencies:
   test: any
