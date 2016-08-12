@@ -1,5 +1,7 @@
 
-<img src="logo.png" style="display: block;margin-left: auto;margin-right: auto"></img>
+<p align="center">
+    <img src="logo.png"></img>
+</p>
 
 A static site generator for blogs, written in Dart.
 
