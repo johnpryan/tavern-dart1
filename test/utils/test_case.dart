@@ -44,6 +44,12 @@ class TestCase {
       barback.updateTransformers(package, [transformers]);
     }
 
+    // Throw any errors
+    barback.results.listen((BuildResult r) {
+      if (r.errors.isEmpty) return;
+      throw(r);
+    });
+
     // Run Barback
     barback.updateSources(input.keys);
     return barback;
