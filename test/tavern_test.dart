@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:tavern/src/tag_index.dart';
 import 'package:tavern/src/template.dart';
 import 'package:test/test.dart';
 import 'package:barback/barback.dart';
@@ -49,10 +48,10 @@ main() {
 
       // Create the page
       var fileContents = '<p>hello</p>';
-      var fileId = new AssetId('a', 'web/contents/mypage.html');
+      var fileId = new AssetId('a', 'web/mypage.html');
 
       var metadataContents = JSON.encode({'template': 'mytemplate'});
-      var metadataId = new AssetId('a', 'web/contents/mypage.metadata.json');
+      var metadataId = new AssetId('a', 'web/mypage.metadata.json');
 
       var assets = {
         templateId: templateContents,
@@ -65,11 +64,10 @@ main() {
       var barback = await t.run();
 
       // Check the output file contents
-      var id = new AssetId('a', 'web/contents/mypage.html');
+      var id = new AssetId('a', 'web/mypage.html');
       var asset = await barback.getAssetById(id);
       var contents = await asset.readAsString();
       expect(contents, contains('<div id="content"><p>hello</p></div>'));
     });
   });
-
 }
