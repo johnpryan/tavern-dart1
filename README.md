@@ -5,13 +5,32 @@
 
 A static site generator for blogs, written in Dart.
 
-## Example
+## Features
 
-Start with a normal dart project, and add a `contents` and `templates` folder:
+- [x] Markdown and Mustache templating
+- [x] Support for tags and a tag index page.
+- [x] Compatibility with dart2js
+- [x] Compatibility with other Dart transformers (e.g. Polymer, SASS)
+- [ ] Support for including a tag list in any page
+- [ ] Base URL configuration (similar to [how it works in Jekyll][1])
+- [ ] Site, post, and template generation tool
+- [ ] Support for configuring post metadata in a separate YAML file
+- [ ] Support for sitemap.xml and rss/atom
+- [ ] Support for multiple languages
+- [ ] Support for archived posts
+
+## Examples
+
+See the [examples](/example) folder.
+
+## Getting Started
+
+Start with a normal dart project with the following structure:
  
     web/
-        contents/
-        templates/
+      index.md
+      templates/
+        index.html
     pubspec.yaml
 
 and in your pubspec:
@@ -23,7 +42,7 @@ and in your pubspec:
     transformers:
     - tavern
 
-the `content/` directory can contain markdown files with metadata:
+In `index.md`, add some metadata and markdown:
 
     ---
     title: Hello World!
@@ -34,9 +53,8 @@ the `content/` directory can contain markdown files with metadata:
 
     foo
 
-the `template` will associate that page with a template in the `templates/`
-directory.  Templates use Mustache bindings and have access to any metadata
-specified in the markdown file.  For example:
+the `templates/index.html` will be associated your page.  Templates use Mustache
+bindings and can use any metadata specified in the markdown file.  For example:
 
 ```
 <html>
@@ -84,4 +102,33 @@ template and use the `posts` metadata:
     </ul>
 
 
+## Other Transformers (e.g. Polymer)
 
+Tavern leverages Dart's asset transformer, and can be used with other transformers.
+It is recommended that other transformers be run *after* Tavern:
+
+```
+transformers:
+- tavern
+- polymer:
+    entry_points:
+      - web/index.html
+```
+
+## Relative Paths / baseurl
+Tavern desn't *yet* have support for configuring and updating the base url.  For
+now it is recommended to use relative and absolute paths: 
+
+```
+<a href="/tags/index.html"</a>
+<a href="../../styles.css"</a>
+```
+
+Any templates that should assume they are at their final position when
+referencing CSS, Dart, JS. For example, `web/templates/index.html` should assume
+it has been already moved to the location of the markdown file using it (e.g.
+`web/index.md`)
+
+
+
+[1]: https://byparker.com/blog/2014/clearing-up-confusion-around-baseurl/
