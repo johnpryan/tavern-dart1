@@ -1,23 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:tavern/src/tag_index.dart';
+import 'package:tavern/src/tag_pages.dart';
 import 'package:tavern/src/template.dart';
+import 'package:tavern/src/template_cleanup.dart';
 import 'package:test/test.dart';
 import 'package:barback/barback.dart';
-import 'package:tavern/src/contents.dart';
 import 'package:tavern/src/metadata.dart';
 import 'utils/test_case.dart';
 
 main() {
-  group('contents transformer', () {
-    test('moves code from contents to root directory', () async {
-      var contents = "hello world";
-      var assets = {new AssetId('a', 'web/contents/foo.txt'): contents};
-      var expected = {new AssetId('a', 'web/foo.txt'): contents};
-      var t = new TestCase([new Contents()], assets);
-      await t.runAndCheck(expected);
-    });
-  });
-
   group('metadata transformer', () {
     test('extracts metadata', () async {
       // Load input file contents
@@ -41,7 +33,6 @@ main() {
   });
   group('template', () {
     test('applies mustache templates', () async {
-
       // Create the template
       var templateContents = '<div id="content">{{{content}}}</div>';
       var templateId = new AssetId('a', 'web/templates/mytemplate.html');
@@ -60,8 +51,12 @@ main() {
       };
 
       // Run barback
-      var t = new TestCase([new Template()], assets);
+      var t = new TestCase([new Template(), new TemplateCleanup()], assets);
       var barback = await t.run();
+
+      // Verify the template was not outputted
+      var allAssets = await barback.getAllAssets();
+      expect(allAssets, hasLength(2));
 
       // Check the output file contents
       var id = new AssetId('a', 'web/mypage.html');
@@ -69,5 +64,81 @@ main() {
       var contents = await asset.readAsString();
       expect(contents, contains('<div id="content"><p>hello</p></div>'));
     });
+  });
+
+  group('tag index', () {
+    test('renders a tag index using a tag_index.html template', () async {
+      // Create a page
+      var metadataContents = JSON.encode({
+        'tags': ['foo', 'bar']
+      });
+      var metadataId = new AssetId('a', 'web/mypage.metadata.json');
+
+      var tagIndexContents = '<div>'
+          '{{#tags}}'
+          '<li><a href="{{url}}">{{name}}</a></li>'
+          '{{/tags}}'
+          '</div>';
+
+      var tagIndexId = new AssetId('a', 'web/templates/tag_index.html');
+
+      var assets = {
+        metadataId: metadataContents,
+        tagIndexId: tagIndexContents,
+      };
+
+      // Run barback
+      var t = new TestCase([new TagIndex()], assets);
+      var barback = await t.run();
+
+      // Check the output file contents
+      var id = new AssetId('a', 'web/tags/index.html');
+      var asset = await barback.getAssetById(id);
+      var contents = await asset.readAsString();
+      var expected = '<li><a href="/tags/foo.html">foo</a></li>';
+      expect(contents, contains(expected));
+    });
+
+    test('skips if no tag_index template is provided', () async {
+      // Create a page
+      var metadataContents = JSON.encode({
+        'tags': ['foo', 'bar']
+      });
+      var metadataId = new AssetId('a', 'web/mypage.metadata.json');
+
+      var assets = {
+        metadataId: metadataContents,
+      };
+
+      // Run barback
+      var t = new TestCase([new TagIndex()], assets);
+      var barback = await t.run();
+
+      // Check the output file contents
+      var outputAssets = await barback.getAllAssets();
+      expect(outputAssets, hasLength(1));
+    });
+  });
+  group('TagPages', () {
+      test('skips if no tag_index template is provided', () async {
+        // Create a page
+        var metadataContents = JSON.encode({
+          'tags': ['foo', 'bar']
+        });
+        var metadataId = new AssetId('a', 'web/mypage.metadata.json');
+
+        var assets = {
+          metadataId: metadataContents,
+        };
+
+        // Run barback
+        var t = new TestCase([new TagPages()], assets);
+        var barback = await t.run();
+
+        // Check the output file contents
+        var id = new AssetId('a', 'web/tags/index.html');
+        var outputAssets = await barback.getAllAssets();
+        expect(outputAssets, hasLength(1));
+      });
   });
 }

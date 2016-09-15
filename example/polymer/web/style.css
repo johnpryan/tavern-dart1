@@ -1,0 +1,19 @@
+body {
+    background-color: #f4f4f4;
+}
+h1, h2, h3, h4, h5 {
+    font-family: "PT Sans";
+    font-weight: 400;
+    color: #303030;
+}
+p {
+    font-family: Georgia, serif;
+    color: #515151;
+}
+.content {
+    padding: 5px 15px 20px 15px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 640px;
+    background-color: white;
+}

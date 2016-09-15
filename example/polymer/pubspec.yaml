@@ -1,0 +1,13 @@
+name: tavern_polymer_example
+dependencies:
+  browser: any
+  polymer: ^1.0.0-rc.18
+  polymer_elements: ^1.0.0-rc.8
+  web_components: ^0.12.3
+  tavern:
+    path: ../../
+transformers:
+- tavern
+- polymer:
+    entry_points:
+      - web/index.html

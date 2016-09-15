@@ -9,6 +9,7 @@ import 'package:tavern/src/template.dart';
 import 'package:tavern/src/cleanup.dart';
 import 'package:tavern/src/tag_index.dart';
 import 'package:tavern/src/tag_pages.dart';
+import 'package:tavern/src/template_cleanup.dart';
 
 class Tavern implements TransformerGroup {
   final Iterable<Iterable> phases;
@@ -23,6 +24,7 @@ List<List<Transformer>> createPhases() {
     [new MetadataAggregator()],
     [new Markdown()],
     [new Template()],
+    [new TemplateCleanup()],
     [new TagPages()],
 //    [new Cleanup()],
   ];

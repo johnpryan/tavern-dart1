@@ -19,7 +19,7 @@ class MetadataAggregator extends AggregateTransformer {
     var aggregate = {};
     await for (var input in transform.primaryInputs) {
       var tags = aggregate['tags'] ?? [];
-      var tagSet = new Set<Tag>()..addAll(tags);
+      var tagSet = new Set<String>()..addAll(tags);
       var content = await input.readAsString();
       var contentMap = JSON.decode(content);
       tagSet.addAll(contentMap['tags'] ?? []);

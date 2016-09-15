@@ -24,10 +24,15 @@ class TagPages extends AggregateTransformer {
       }
     }
 
+    // Fail gracefully if the template is not provided.
+    var templateId = new AssetId(transform.package, templateFilePath);
+    var hasTemplateAsset = await transform.hasInput(templateId);
+    if (!hasTemplateAsset) return;
+
     for (var tag in tagToPostsLookup.keys) {
       var path = 'web/tags/$tag.html';
       var id = new AssetId(transform.package, path);
-      var templateId = new AssetId(transform.package, templateFilePath);
+
       var templateAsset = await transform.getInput(templateId);
       var templateContents = await templateAsset.readAsString();
       var templateData = {
