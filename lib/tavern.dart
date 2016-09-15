@@ -26,6 +26,6 @@ List<List<Transformer>> createPhases() {
     [new Template()],
     [new TemplateCleanup()],
     [new TagPages()],
-//    [new Cleanup()],
+    [new Cleanup()],
   ];
 }
