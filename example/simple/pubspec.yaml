@@ -4,4 +4,7 @@ dependencies:
   tavern:
     path: ../../
 transformers:
-- tavern
+- tavern:
+    # Optional settings:
+    siteUrl: http://example.com/
+    sitemapPath: /sitemap.xml
