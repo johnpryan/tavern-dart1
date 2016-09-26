@@ -17,7 +17,7 @@ A static site generator for blogs, written in Dart.
 - [ ] Base URL configuration (similar to [how it works in Jekyll][1])
 - [ ] Site, post, and template generation tool
 - [ ] Support for configuring post metadata in a separate YAML file
-- [ ] Support for sitemap.xml and rss/atom
+- [x] Support for sitemap.xml and rss/atom
 - [ ] Support for multiple languages
 - [ ] Support for archived posts
 

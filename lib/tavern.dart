@@ -24,7 +24,7 @@ class Tavern implements TransformerGroup {
 
 List<List<Transformer>> createPhases(BarbackSettings barbackSettings) {
   TavernSettings settings =
-      new TavernSettings.fromMap(barbackSettings.configuration);
+      new TavernSettings.fromJson(barbackSettings.configuration);
   return [
     [new Metadata()],
     [new TagIndex()],

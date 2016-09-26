@@ -4,7 +4,6 @@ import 'utils.dart';
 import 'dart:async';
 import 'package:barback/barback.dart';
 import 'dart:convert';
-import 'package:tavern/src/models.dart';
 
 const aggregateFilePath = "web/aggregate.tavern.json";
 

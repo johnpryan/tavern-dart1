@@ -1,21 +1,38 @@
-class TavernSettings {
+library tavern.settings;
+
+import 'package:source_gen/generators/json_serializable.dart';
+
+part 'settings.g.dart';
+
+@JsonSerializable()
+class TavernSettings extends _$TavernSettingsSerializerMixin {
   /// The base URL of the site.
-  String siteUrl;
+  @JsonKey('site_url')
+  final String siteUrl;
 
-  /// The location of the sitemap output.
-  /// Relative to the web/ directory.
-  String sitemapPath;
+  /// The location of the sitemap output. Relative to the web/ directory.
+  @JsonKey('sitemap_path')
+  final String sitemapPath;
 
-  TavernSettings.fromMap(Map map) {
-    siteUrl = map['siteUrl'];
-    sitemapPath = map['sitemapPath'];
-    // strip trailing slash from siteUrl
-    while (siteUrl?.endsWith('/') ?? false) {
-      siteUrl = siteUrl.substring(0, siteUrl.length - 1);
+  TavernSettings(String siteUrl, String sitemapPath)
+      : this.siteUrl = stripTrailingSlash(siteUrl),
+        this.sitemapPath = addLeadingSlash(sitemapPath);
+
+
+  static String stripTrailingSlash(String s) {
+    while (s?.endsWith('/') ?? false) {
+      s = s.substring(0, s.length - 1);
     }
-    // add leading slash to sitemapPath
-    if (sitemapPath != null && !sitemapPath.startsWith('/')) {
-      sitemapPath = '/$sitemapPath';
-    }
+    return s;
   }
+
+  static String addLeadingSlash(String s) {
+    if (s != null && !s.startsWith('/')) {
+      s = '/$s';
+    }
+    return s;
+  }
+
+
+  factory TavernSettings.fromJson(json) => _$TavernSettingsFromJson(json);
 }
