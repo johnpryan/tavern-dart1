@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:tavern/src/settings.dart';
+import 'package:tavern/src/sitemap.dart';
 import 'package:tavern/src/tag_index.dart';
 import 'package:tavern/src/tag_pages.dart';
 import 'package:tavern/src/template.dart';
@@ -119,6 +121,7 @@ main() {
       expect(outputAssets, hasLength(1));
     });
   });
+
   group('TagPages', () {
       test('skips if no tag_index template is provided', () async {
         // Create a page
@@ -136,9 +139,38 @@ main() {
         var barback = await t.run();
 
         // Check the output file contents
-        var id = new AssetId('a', 'web/tags/index.html');
         var outputAssets = await barback.getAllAssets();
         expect(outputAssets, hasLength(1));
       });
+  });
+  group('Sitemap', () {
+    test('generates sitemap.xml based on settings', () async {
+      // Create a page
+      var indexContents = '''<html></html>''';
+      var indexId = new AssetId('a', 'web/index.html');
+
+      var assets = {
+        indexId: indexContents,
+      };
+
+      var settings = new TavernSettings('http://foo.com', 'sitemap.xml');
+
+      // Run barback
+      var t = new TestCase([new Sitemap(settings)], assets);
+      var barback = await t.run();
+
+      // Check the output file contents
+      var id = new AssetId('a', 'web/sitemap.xml');
+      var asset = await barback.getAssetById(id);
+      var contents = await asset.readAsString();
+      expect(contents, isNotEmpty);
+
+      // Load expected file contents
+      var path = 'test/fixtures/sitemap.xml';
+      var file = new File(path);
+      var expected = file.readAsStringSync();
+
+      expect(contents, equals(expected));
+    });
   });
 }
