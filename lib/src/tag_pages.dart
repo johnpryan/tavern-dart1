@@ -1,24 +1,48 @@
-import 'package:barback/barback.dart';
 import 'dart:async';
-import 'package:tavern/src/utils.dart';
 import 'dart:convert';
+
+import 'package:barback/barback.dart';
 import 'package:mustache/mustache.dart' as mustache;
+
+import 'package:tavern/src/settings.dart';
+import 'package:tavern/src/utils.dart';
 
 const templateFilePath = "web/templates/tag_page.html";
 
+class TagPageUrlGenerator {
+  static const indexFile = 'index.html';
+
+  mustache.Template _template;
+
+  TagPageUrlGenerator(String path) {
+    _template = new mustache.Template(path ?? '/tags/{{tag}}.html');
+  }
+
+  String getUrl(String tag, {bool stripIndexHtml: false}) {
+    String url = _template.renderString({'tag': tag});
+    if (stripIndexHtml && url.endsWith('/$indexFile'))
+      url = url.substring(0, url.length - indexFile.length);
+    return url;
+  }
+}
+
 class TagPages extends AggregateTransformer {
+  final TavernSettings settings;
+  TagPageUrlGenerator _tagPageUrlGenerator;
+
+  TagPages(this.settings) {
+    _tagPageUrlGenerator = new TagPageUrlGenerator(settings.tagPagePath);
+  }
+
   @override
   Future apply(AggregateTransform transform) async {
-
-    Map<String, Set<Post>> tagToPostsLookup = {};
+    Map<String, List<Post>> tagToPostsLookup = {};
 
     await for (var input in transform.primaryInputs) {
       var content = await input.readAsString();
       var contentMap = JSON.decode(content);
       for (var tag in contentMap['tags']) {
-        if (tagToPostsLookup[tag] == null) {
-          tagToPostsLookup[tag] = new Set();
-        }
+        tagToPostsLookup[tag] ??= [];
         var post = new Post(contentMap['title'], contentMap['url'] ?? '#');
         tagToPostsLookup[tag].add(post);
       }
@@ -30,21 +54,13 @@ class TagPages extends AggregateTransformer {
     if (!hasTemplateAsset) return;
 
     for (var tag in tagToPostsLookup.keys) {
-      var path = 'web/tags/$tag.html';
+      var path = 'web${_tagPageUrlGenerator.getUrl(tag)}';
       var id = new AssetId(transform.package, path);
 
       var templateAsset = await transform.getInput(templateId);
       var templateContents = await templateAsset.readAsString();
-      var templateData = {
-        'tag': tag,
-        'posts': []
-      };
-      for (var post in tagToPostsLookup[tag]) {
-        templateData['posts'].add({
-          'name': post.name,
-          'url': post.url,
-        });
-      }
+      var posts = tagToPostsLookup[tag].map((post) => post.toMap()).toList();
+      var templateData = {'tag': tag, 'posts': posts};
       var template = new mustache.Template(templateContents);
       var output = template.renderString(templateData);
       transform.addOutput(new Asset.fromString(id, output));
@@ -61,4 +77,6 @@ class Post {
   String name;
   String url;
   Post(this.name, this.url);
+
+  Map toMap() => {'name': name, 'url': url};
 }

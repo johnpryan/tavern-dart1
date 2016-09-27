@@ -27,12 +27,12 @@ List<List<Transformer>> createPhases(BarbackSettings barbackSettings) {
       new TavernSettings.fromJson(barbackSettings.configuration);
   return [
     [new Metadata()],
-    [new TagIndex()],
+    [new TagIndex(settings)],
     [new MetadataAggregator()],
     [new Markdown()],
     [new Template()],
     [new TemplateCleanup()],
-    [new TagPages()],
+    [new TagPages(settings)],
     [new Sitemap(settings)],
     [new Cleanup()],
   ];

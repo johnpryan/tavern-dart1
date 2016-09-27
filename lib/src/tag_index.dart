@@ -1,13 +1,23 @@
-import 'package:barback/barback.dart';
-import 'package:tavern/src/utils.dart';
-import 'dart:convert';
 import 'dart:async';
+import 'dart:convert';
+
+import 'package:barback/barback.dart';
 import 'package:mustache/mustache.dart' as mustache;
 
+import 'package:tavern/src/settings.dart';
+import 'package:tavern/src/tag_pages.dart';
+import 'package:tavern/src/utils.dart';
+
 const templateFilePath = "web/templates/tag_index.html";
-const tagPath = "/tags";
 
 class TagIndex extends AggregateTransformer {
+  final TavernSettings settings;
+  TagPageUrlGenerator _tagPageUrlGenerator;
+
+  TagIndex(this.settings) {
+    _tagPageUrlGenerator = new TagPageUrlGenerator(settings.tagPagePath);
+  }
+
   @override
   Future apply(AggregateTransform transform) async {
     // Use a set to dedupe tags found in metadata files
@@ -31,11 +41,14 @@ class TagIndex extends AggregateTransformer {
     var templateContents = await templateAsset.readAsString();
 
     // Generate metadata to feed into the mustache template
-    var metadata = {};
-    metadata['tags'] = [];
-    for (var tag in tags) {
-      metadata['tags'].add({'name': tag, 'url': "$tagPath/$tag.html"});
-    }
+    var metadata = {
+      'tags': tags
+          .map((tag) => {
+                'name': tag,
+                'url': _tagPageUrlGenerator.getUrl(tag, stripIndexHtml: true)
+              })
+          .toList()
+    };
 
     // Render the mustache template.  The mustache library escapes html
     // differently from dart:convert's HtmlEscape converter so it is not used.
@@ -44,7 +57,8 @@ class TagIndex extends AggregateTransformer {
     var output = template.renderString(metadata);
 
     // Output the HTML page
-    var id = new AssetId(transform.package, "web/tags/index.html");
+    String indexPath = settings.tagPageIndex ?? '/tags/index.html';
+    var id = new AssetId(transform.package, 'web$indexPath');
     transform.addOutput(new Asset.fromString(id, output));
   }
 
