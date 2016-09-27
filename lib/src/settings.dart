@@ -14,10 +14,16 @@ class TavernSettings extends _$TavernSettingsSerializerMixin {
   @JsonKey('sitemap_path')
   final String sitemapPath;
 
-  TavernSettings(String siteUrl, String sitemapPath)
+  @JsonKey('tag_page_path')
+  String tagPagePath;
+
+  @JsonKey('tag_page_path')
+  String tagPageIndex;
+
+  TavernSettings(String siteUrl, String sitemapPath,
+      {this.tagPagePath, this.tagPageIndex})
       : this.siteUrl = stripTrailingSlash(siteUrl),
         this.sitemapPath = addLeadingSlash(sitemapPath);
-
 
   static String stripTrailingSlash(String s) {
     while (s?.endsWith('/') ?? false) {
@@ -32,7 +38,6 @@ class TavernSettings extends _$TavernSettingsSerializerMixin {
     }
     return s;
   }
-
 
   factory TavernSettings.fromJson(json) => _$TavernSettingsFromJson(json);
 }

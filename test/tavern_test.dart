@@ -89,8 +89,10 @@ main() {
         tagIndexId: tagIndexContents,
       };
 
+      var settings = new TavernSettings('http://foo.com', 'sitemap.xml');
+
       // Run barback
-      var t = new TestCase([new TagIndex()], assets);
+      var t = new TestCase([new TagIndex(settings)], assets);
       var barback = await t.run();
 
       // Check the output file contents
@@ -112,8 +114,10 @@ main() {
         metadataId: metadataContents,
       };
 
+      var settings = new TavernSettings('http://foo.com', 'sitemap.xml');
+
       // Run barback
-      var t = new TestCase([new TagIndex()], assets);
+      var t = new TestCase([new TagIndex(settings)], assets);
       var barback = await t.run();
 
       // Check the output file contents
@@ -134,8 +138,10 @@ main() {
           metadataId: metadataContents,
         };
 
+        var settings = new TavernSettings('http://foo.com', 'sitemap.xml');
+
         // Run barback
-        var t = new TestCase([new TagPages()], assets);
+        var t = new TestCase([new TagPages(settings)], assets);
         var barback = await t.run();
 
         // Check the output file contents
