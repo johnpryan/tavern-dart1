@@ -30,9 +30,7 @@ class Sitemap extends AggregateTransformer {
       if (url.endsWith('/$indexFile')) {
         url = url.substring(0, url.length - indexFile.length);
       }
-      if (settings.siteUrl != null) {
-        url = '${settings.siteUrl}$url';
-      }
+      url = '${settings.siteUrl}$url';
       output.write(_wrap(url));
     }
     output.write(_urlSetEnd);

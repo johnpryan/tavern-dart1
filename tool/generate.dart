@@ -15,4 +15,5 @@ final PhaseGroup phases = new PhaseGroup.singleAction(
       const json.JsonSerializableGenerator(),
       const literal.JsonLiteralGenerator()
     ]),
-    new InputSet('tavern', const ['lib/src/settings.dart']));
+    new InputSet(
+        'tavern', const ['lib/src/settings.dart', 'lib/src/models.dart']));

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:barback/barback.dart';
 import 'package:mustache/mustache.dart' as mustache;
 
+import 'package:tavern/src/models.dart';
 import 'package:tavern/src/settings.dart';
 import 'package:tavern/src/utils.dart';
 
@@ -12,10 +13,10 @@ const templateFilePath = "web/templates/tag_page.html";
 class TagPageUrlGenerator {
   static const indexFile = 'index.html';
 
-  mustache.Template _template;
+  final mustache.Template _template;
 
-  TagPageUrlGenerator(String path) {
-    _template = new mustache.Template(path ?? '/tags/{{tag}}.html');
+  TagPageUrlGenerator(String path) :
+    _template = new mustache.Template(path) {
   }
 
   String getUrl(String tag, {bool stripIndexHtml: false}) {
@@ -59,11 +60,12 @@ class TagPages extends AggregateTransformer {
 
       var templateAsset = await transform.getInput(templateId);
       var templateContents = await templateAsset.readAsString();
-      var posts = tagToPostsLookup[tag].map((post) => post.toMap()).toList();
+      var posts = tagToPostsLookup[tag].map((post) => post.toJson()).toList();
       var templateData = {'tag': tag, 'posts': posts};
       var template = new mustache.Template(templateContents);
       var output = template.renderString(templateData);
-      transform.addOutput(new Asset.fromString(id, output));
+      var asset = new Asset.fromString(id, output);
+      transform.addOutput(asset);
     }
   }
 
@@ -71,12 +73,4 @@ class TagPages extends AggregateTransformer {
   classifyPrimary(AssetId id) {
     return id.path.endsWith(metadataExtension) ? 'meta' : null;
   }
-}
-
-class Post {
-  String name;
-  String url;
-  Post(this.name, this.url);
-
-  Map toMap() => {'name': name, 'url': url};
 }

@@ -11,6 +11,11 @@ foo
 code
 ```
 
+## Some posts
+
+- [goals](/posts/goals.html)
+- [test post](/posts/test_post.html)
+
 View the [tags index page](/tags).
 
 [//]: # (Tavern can run Dart code)

@@ -12,11 +12,11 @@ const templateFilePath = "web/templates/tag_index.html";
 
 class TagIndex extends AggregateTransformer {
   final TavernSettings settings;
-  TagPageUrlGenerator _tagPageUrlGenerator;
+  final TagPageUrlGenerator _tagPageUrlGenerator;
 
-  TagIndex(this.settings) {
-    _tagPageUrlGenerator = new TagPageUrlGenerator(settings.tagPagePath);
-  }
+  TagIndex(TavernSettings settings)
+      : this.settings = settings,
+        _tagPageUrlGenerator = new TagPageUrlGenerator(settings.tagPagePath);
 
   @override
   Future apply(AggregateTransform transform) async {
@@ -41,13 +41,10 @@ class TagIndex extends AggregateTransformer {
     var templateContents = await templateAsset.readAsString();
 
     // Generate metadata to feed into the mustache template
+    var generateUrl =
+        (String tag) => _tagPageUrlGenerator.getUrl(tag, stripIndexHtml: true);
     var metadata = {
-      'tags': tags
-          .map((tag) => {
-                'name': tag,
-                'url': _tagPageUrlGenerator.getUrl(tag, stripIndexHtml: true)
-              })
-          .toList()
+      'tags': tags.map((tag) => {'name': tag, 'url': generateUrl(tag)}).toList()
     };
 
     // Render the mustache template.  The mustache library escapes html
@@ -57,8 +54,7 @@ class TagIndex extends AggregateTransformer {
     var output = template.renderString(metadata);
 
     // Output the HTML page
-    String indexPath = settings.tagPageIndex ?? '/tags/index.html';
-    var id = new AssetId(transform.package, 'web$indexPath');
+    var id = new AssetId(transform.package, 'web${settings.tagPageIndex}');
     transform.addOutput(new Asset.fromString(id, output));
   }
 
