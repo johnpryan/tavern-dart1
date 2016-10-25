@@ -1,6 +1,6 @@
 name: tavern
 description: a static site generator
-version: 1.0.1
+version: 1.0.2
 author: John Ryan <john.p.ryan4@gmail.com>
 homepage: https://www.github.com/johnpryan/tavern
 dependencies:
