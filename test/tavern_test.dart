@@ -89,8 +89,10 @@ main() {
         tagIndexId: tagIndexContents,
       };
 
+      var settings = new TavernSettings();
+
       // Run barback
-      var t = new TestCase([new TagIndex()], assets);
+      var t = new TestCase([new TagIndex(settings)], assets);
       var barback = await t.run();
 
       // Check the output file contents
@@ -112,8 +114,10 @@ main() {
         metadataId: metadataContents,
       };
 
+      var settings = new TavernSettings();
+
       // Run barback
-      var t = new TestCase([new TagIndex()], assets);
+      var t = new TestCase([new TagIndex(settings)], assets);
       var barback = await t.run();
 
       // Check the output file contents
@@ -123,26 +127,84 @@ main() {
   });
 
   group('TagPages', () {
-      test('skips if no tag_index template is provided', () async {
-        // Create a page
-        var metadataContents = JSON.encode({
-          'tags': ['foo', 'bar']
-        });
-        var metadataId = new AssetId('a', 'web/mypage.metadata.json');
-
-        var assets = {
-          metadataId: metadataContents,
-        };
-
-        // Run barback
-        var t = new TestCase([new TagPages()], assets);
-        var barback = await t.run();
-
-        // Check the output file contents
-        var outputAssets = await barback.getAllAssets();
-        expect(outputAssets, hasLength(1));
+    test('skips if no tag_index template is provided', () async {
+      // Create a page
+      var metadataContents = JSON.encode({
+        'tags': ['foo', 'bar']
       });
+      var metadataId = new AssetId('a', 'web/mypage.metadata.json');
+
+      var assets = {
+        metadataId: metadataContents,
+      };
+
+      var settings = new TavernSettings();
+
+      // Run barback
+      var t = new TestCase([new TagPages(settings)], assets);
+      var barback = await t.run();
+
+      // Check the output file contents
+      var outputAssets = await barback.getAllAssets();
+      expect(outputAssets, hasLength(1));
+    });
+
+    test('generates tag pages', () async {
+      // Create a page
+      var metadataContents = JSON.encode({
+        'tags': ['foo', 'bar'],
+        'url': '/mypage.html'
+      });
+      var metadataId = new AssetId('a', 'web/mypage.metadata.json');
+
+      var tagIndexContents = '<div>'
+          '{{#tags}}'
+          '<li><a href="{{url}}">{{name}}</a></li>'
+          '{{/tags}}'
+          '</div>';
+
+      var tagIndexId = new AssetId('a', 'web/templates/tag_index.html');
+
+      var tagPageContents = '<h1>Posts Tagged {{tag}}</h1>'
+          '<div id="content">'
+          '<ul>'
+          '{{#posts}}'
+          '<li><a href="{{url}}">{{name}}</a></li>'
+          '{{/posts}}'
+          '</ul>'
+          '</div>';
+
+      var tagPageId = new AssetId('a', 'web/templates/tag_page.html');
+
+      var assets = {
+        metadataId: metadataContents,
+        tagIndexId: tagIndexContents,
+        tagPageId: tagPageContents,
+      };
+
+      var settings = new TavernSettings(siteUrl: 'http://foo.com', sitemapPath: '/sitemap.xml');
+
+      // Run barback
+      var t = new TestCase(
+          [new TagIndex(settings), new TagPages(settings)], assets);
+      var barback = await t.run();
+
+      // Check the output file contents
+      var outputAssets = await barback.getAllAssets();
+      expect(outputAssets, hasLength(6));
+
+      // Verify the tag page was created.
+      var tagPage = outputAssets
+          .firstWhere((asset) => asset.id.path == "web/tags/foo.html");
+      var expected = '<h1>Posts Tagged foo</h1>'
+          '<div id="content">'
+          '<ul><li><a href="&#x2F;mypage.html"></a></li></ul>'
+          '</div>';
+      expect(await tagPage.readAsString(), equals(expected));
+      expect(tagPage, isNotNull);
+    });
   });
+
   group('Sitemap', () {
     test('generates sitemap.xml based on settings', () async {
       // Create a page
@@ -153,7 +215,7 @@ main() {
         indexId: indexContents,
       };
 
-      var settings = new TavernSettings('http://foo.com', 'sitemap.xml');
+      var settings = new TavernSettings(siteUrl: 'http://foo.com', sitemapPath: 'sitemap.xml');
 
       // Run barback
       var t = new TestCase([new Sitemap(settings)], assets);
@@ -171,6 +233,25 @@ main() {
       var expected = file.readAsStringSync();
 
       expect(contents, equals(expected));
+    });
+  });
+
+  group('TagPageUrlGenerator', () {
+
+    test('stripIndexHtml: false', () {
+      var generator = new TagPageUrlGenerator('/tags/{{tag}}.html');
+      var result = generator.getUrl('hello');
+      expect(result, equals('/tags/hello.html'));
+    });
+    test('stripIndexHtml: true', () {
+      var generator = new TagPageUrlGenerator('/tags/{{tag}}.html');
+      var result = generator.getUrl('index', stripIndexHtml: true);
+      expect(result, equals('/tags/'));
+    });
+    test('stripIndexHtml: true with no index', () {
+      var generator = new TagPageUrlGenerator('/tags/{{tag}}.html');
+      var result = generator.getUrl('hello', stripIndexHtml: true);
+      expect(result, equals('/tags/hello.html'));
     });
   });
 }

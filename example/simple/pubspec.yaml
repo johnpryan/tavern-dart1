@@ -5,6 +5,6 @@ dependencies:
     path: ../../
 transformers:
 - tavern:
-    # Optional settings:
-    siteUrl: http://example.com/
-    sitemapPath: /sitemap.xml
+    site_url: "http://example.com/"
+    sitemap_path: "/sitemap.xml"
+    tag_page_index: "/tags/index.html"

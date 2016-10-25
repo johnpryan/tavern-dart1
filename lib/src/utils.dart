@@ -23,3 +23,17 @@ String getHtmlPath(String p) {
   result.add(filename);
   return path.joinAll(result);
 }
+
+String stripTrailingSlash(String s) {
+  while (s?.endsWith('/') ?? false) {
+    s = s.substring(0, s.length - 1);
+  }
+  return s;
+}
+
+String addLeadingSlash(String s) {
+  if (s != null && !s.startsWith('/')) {
+    s = '/$s';
+  }
+  return s;
+}

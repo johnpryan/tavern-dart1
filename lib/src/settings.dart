@@ -1,6 +1,7 @@
 library tavern.settings;
 
 import 'package:source_gen/generators/json_serializable.dart';
+import 'package:tavern/src/utils.dart';
 
 part 'settings.g.dart';
 
@@ -14,25 +15,21 @@ class TavernSettings extends _$TavernSettingsSerializerMixin {
   @JsonKey('sitemap_path')
   final String sitemapPath;
 
-  TavernSettings(String siteUrl, String sitemapPath)
-      : this.siteUrl = stripTrailingSlash(siteUrl),
-        this.sitemapPath = addLeadingSlash(sitemapPath);
+  @JsonKey('tag_page_path')
+  final String tagPagePath;
 
+  @JsonKey('tag_page_index')
+  final String tagPageIndex;
 
-  static String stripTrailingSlash(String s) {
-    while (s?.endsWith('/') ?? false) {
-      s = s.substring(0, s.length - 1);
-    }
-    return s;
-  }
-
-  static String addLeadingSlash(String s) {
-    if (s != null && !s.startsWith('/')) {
-      s = '/$s';
-    }
-    return s;
-  }
-
+  TavernSettings(
+      {String siteUrl,
+      String sitemapPath,
+      String tagPagePath,
+      String tagPageIndex})
+      : this.siteUrl = stripTrailingSlash(siteUrl ?? "/"),
+        this.sitemapPath = addLeadingSlash(sitemapPath ?? "/sitemap.xml"),
+        this.tagPagePath = addLeadingSlash(tagPagePath ?? '/tags/{{tag}}.html'),
+        this.tagPageIndex = addLeadingSlash(tagPageIndex ?? '/tags/index.html');
 
   factory TavernSettings.fromJson(json) => _$TavernSettingsFromJson(json);
 }
