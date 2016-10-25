@@ -20,16 +20,6 @@ class TagIndex extends AggregateTransformer {
 
   @override
   Future apply(AggregateTransform transform) async {
-    // Use a set to dedupe tags found in metadata files
-    var tags = new Set();
-
-    // load all metadata.json files
-    await for (var input in transform.primaryInputs) {
-      var content = await input.readAsString();
-      var contentMap = JSON.decode(content);
-      tags.addAll(contentMap['tags'] ?? []);
-    }
-
     // Fail gracefully if there is no tag_index.html template
     var templateId = new AssetId(transform.package, templateFilePath);
     if (!(await transform.hasInput(templateId))) {

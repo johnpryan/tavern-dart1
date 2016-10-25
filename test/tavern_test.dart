@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:tavern/src/models.dart';
 import 'package:tavern/src/settings.dart';
 import 'package:tavern/src/sitemap.dart';
 import 'package:tavern/src/tag_index.dart';
+import 'package:tavern/src/tag_metadata.dart';
 import 'package:tavern/src/tag_pages.dart';
 import 'package:tavern/src/template.dart';
 import 'package:tavern/src/template_cleanup.dart';
@@ -23,14 +25,14 @@ main() {
       var assets = {new AssetId('a', 'web/foo.md'): contents};
 
       // Run barback
-      var t = new TestCase([new Metadata()], assets);
+      var t = new TestCase([new MetadataTransformer()], assets);
       var barback = await t.run();
 
       // Check the metadata file contents
       var id = new AssetId('a', 'web/foo.metadata.json');
       var asset = await barback.getAssetById(id);
       var json = JSON.decode(await asset.readAsString());
-      expect(json, containsPair('foo', 'bar'));
+      expect(json, containsPair('title', 'bar'));
     });
   });
   group('template', () {
@@ -123,6 +125,38 @@ main() {
       // Check the output file contents
       var outputAssets = await barback.getAllAssets();
       expect(outputAssets, hasLength(1));
+    });
+  });
+
+  group('Tag Metadata', () {
+    test('writes tag data to metadata.json files', () async {
+      // Create two pages
+      var metadataContents = JSON.encode({
+        'tags': ['foo', 'bar']
+      });
+      var metadataId = new AssetId('a', 'web/mypage.metadata.json');
+
+      var metadata2Contents = JSON.encode({
+        'tags': ['biz', 'bar']
+      });
+      var metadata2Id = new AssetId('a', 'web/mypage2.metadata.json');
+
+      var assets = {
+        metadataId: metadataContents,
+        metadata2Id: metadata2Contents,
+      };
+
+      var settings = new TavernSettings();
+
+      // Run barback
+      var t = new TestCase([new TagMetadata(settings)], assets);
+      var barback = await t.run();
+
+      // Check the output file contents
+      var outputAssets = await barback.getAllAssets();
+      var stringData = await outputAssets.first.readAsString();
+      var metadata = new Metadata.fromJson(JSON.decode(stringData));
+      expect(metadata.allTags.length, equals(3));
     });
   });
 

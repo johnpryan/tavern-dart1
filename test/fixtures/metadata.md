@@ -1,5 +1,5 @@
 ---
-foo: bar
+title: bar
 tags: ['code', 'dart']
 ---
 # header

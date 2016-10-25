@@ -12,7 +12,7 @@ main() {
       var result = extractMetadata(contents, path);
       expect(result.metadata, isNotNull);
       expect(result.content, isNotNull);
-      expect(result.metadata.keys, contains('foo'));
+      expect(result.metadata.title, 'bar');
       expect(result.content, startsWith('# header'));
     });
     test('returns null if no metadata', () {

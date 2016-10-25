@@ -5,9 +5,10 @@ import 'package:yaml/yaml.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:tavern/src/utils.dart';
+import 'package:tavern/src/models.dart';
 
-class Metadata extends Transformer {
-  Metadata();
+class MetadataTransformer extends Transformer {
+  MetadataTransformer();
   String get allowedExtensions => ".md .markdown .mdown";
 
   Future apply(Transform transform) async {
@@ -55,15 +56,16 @@ MetadataOutput extractMetadata(String file, String path) {
     throw ('unexpected metadata');
   }
 
-  var metadata = new Map.from(yaml);
-  metadata['url'] = getHtmlPath(path);
+  var metadataMap = new Map.from(yaml);
+  var metadata = new Metadata.fromJson(metadataMap);
+  metadata.url = getHtmlPath(path);
 
   lines.removeRange(first, last + 1);
   return new MetadataOutput(metadata, lines.join('\n'));
 }
 
 class MetadataOutput {
-  final Map<String, dynamic> metadata;
+  final Metadata metadata;
   final String content;
   MetadataOutput(this.metadata, this.content);
 }
