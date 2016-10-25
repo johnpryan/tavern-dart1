@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:barback/barback.dart';
 import 'package:mustache/mustache.dart' as mustache;
 
+import 'package:tavern/src/models.dart';
 import 'package:tavern/src/settings.dart';
 import 'package:tavern/src/tag_pages.dart';
 import 'package:tavern/src/utils.dart';
@@ -20,6 +21,16 @@ class TagIndex extends AggregateTransformer {
 
   @override
   Future apply(AggregateTransform transform) async {
+    // Use a set to dedupe tags found in metadata files
+    var tags = new Set();
+
+    // load all metadata.json files
+    await for (var input in transform.primaryInputs) {
+      var content = await input.readAsString();
+      var contentMap = JSON.decode(content);
+      tags.addAll(contentMap['tags'] ?? []);
+    }
+
     // Fail gracefully if there is no tag_index.html template
     var templateId = new AssetId(transform.package, templateFilePath);
     if (!(await transform.hasInput(templateId))) {
