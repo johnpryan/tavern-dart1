@@ -16,7 +16,7 @@ code
 - [goals](/posts/goals.html)
 - [test post](/posts/test_post.html)
 
-View the [tags index page](/tags).
+View the [tags index page](/tags.html).
 
 [//]: # (Tavern can run Dart code)
 <script type="application/dart" src="./main.dart"></script>

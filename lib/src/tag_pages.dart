@@ -42,7 +42,7 @@ class TagPages extends AggregateTransformer {
     await for (var input in transform.primaryInputs) {
       var content = await input.readAsString();
       var contentMap = JSON.decode(content);
-      for (var tag in contentMap['tags']) {
+      for (var tag in contentMap['tags'] ?? []) {
         tagToPostsLookup[tag] ??= [];
         var post = new Post(contentMap['title'], contentMap['url'] ?? '#');
         tagToPostsLookup[tag].add(post);
