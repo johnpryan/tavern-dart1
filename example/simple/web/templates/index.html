@@ -8,6 +8,11 @@
     <div id="content">
         {{{content}}}
     </div>
+    <div id="tags">
+        {{#tag_metadata}}
+        <li><a href="{{url}}">{{name}}</a></li>
+        {{/tag_metadata}}
+    </div>
 </div>
 </body>
 </html>

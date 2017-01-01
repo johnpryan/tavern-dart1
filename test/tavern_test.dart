@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:collection/collection.dart';
 import 'package:tavern/src/settings.dart';
 import 'package:tavern/src/sitemap.dart';
-import 'package:tavern/src/tag_index.dart';
+import 'package:tavern/src/tag_metadata.dart';
 import 'package:tavern/src/tag_pages.dart';
 import 'package:tavern/src/template.dart';
 import 'package:tavern/src/template_cleanup.dart';
@@ -68,46 +69,57 @@ main() {
     });
   });
 
-  group('tag index', () {
-    test('renders a tag index using a tag_index.html template', () async {
-      // Create a page
-      var metadataContents = JSON.encode({
-        'tags': ['foo', 'bar']
+  group('tag metadata', () {
+    test('is added to page metadata', () async {
+      // Create two pages
+      var metadata1Contents = JSON.encode({
+        'tags': ['foo']
       });
-      var metadataId = new AssetId('a', 'web/mypage.metadata.json');
+      var metadata2Contents = JSON.encode({
+        'tags': ['bar']
+      });
 
-      var tagIndexContents = '<div>'
-          '{{#tags}}'
-          '<li><a href="{{url}}">{{name}}</a></li>'
-          '{{/tags}}'
-          '</div>';
-
-      var tagIndexId = new AssetId('a', 'web/templates/tag_index.html');
+      var metadata1Id = new AssetId('a', 'web/mypage1.metadata.json');
+      var metadata2Id = new AssetId('a', 'web/mypage2.metadata.json');
 
       var assets = {
-        metadataId: metadataContents,
-        tagIndexId: tagIndexContents,
+        metadata1Id: metadata1Contents,
+        metadata2Id: metadata2Contents,
       };
 
       var settings = new TavernSettings();
 
       // Run barback
-      var t = new TestCase([new TagIndex(settings)], assets);
+      var t = new TestCase([new TagMetadata(settings)], assets);
       var barback = await t.run();
 
       // Check the output file contents
-      var id = new AssetId('a', 'web/tags/index.html');
-      var asset = await barback.getAssetById(id);
-      var contents = await asset.readAsString();
-      var expected = '<li><a href="/tags/foo.html">foo</a></li>';
-      expect(contents, contains(expected));
-    });
+      var id1 = new AssetId('a', 'web/mypage1.metadata.json');
+      var asset1 = await barback.getAssetById(id1);
+      var contents1 = await asset1.readAsString();
+      var decoded1 = JSON.decode(contents1) as Map<String, dynamic>;
 
-    test('skips if no tag_index template is provided', () async {
+      var id2 = new AssetId('a', 'web/mypage2.metadata.json');
+      var asset2 = await barback.getAssetById(id2);
+      var contents2 = await asset2.readAsString();
+      var decoded2 = JSON.decode(contents2) as Map<String, dynamic>;
+
+      expect(decoded1.containsKey('tag_metadata'), isTrue);
+      expect(decoded2.containsKey('tag_metadata'), isTrue);
+      var expected = [
+        {"name": "foo", "url": "/tags/foo.html"},
+        {"name": "bar", "url": "/tags/bar.html"}
+      ];
+      const mapEqual = const DeepCollectionEquality.unordered();
+      expect(mapEqual.equals(decoded1['tag_metadata'], expected), isTrue);
+      expect(mapEqual.equals(decoded2['tag_metadata'], expected), isTrue);
+    });
+  });
+
+  group('TagPages', () {
+    test('skips if no tags are provided', () async {
       // Create a page
-      var metadataContents = JSON.encode({
-        'tags': ['foo', 'bar']
-      });
+      var metadataContents = JSON.encode({});
       var metadataId = new AssetId('a', 'web/mypage.metadata.json');
 
       var assets = {
@@ -117,16 +129,14 @@ main() {
       var settings = new TavernSettings();
 
       // Run barback
-      var t = new TestCase([new TagIndex(settings)], assets);
+      var t = new TestCase([new TagPages(settings)], assets);
       var barback = await t.run();
 
       // Check the output file contents
       var outputAssets = await barback.getAllAssets();
       expect(outputAssets, hasLength(1));
     });
-  });
 
-  group('TagPages', () {
     test('skips if no tag_index template is provided', () async {
       // Create a page
       var metadataContents = JSON.encode({
@@ -182,16 +192,16 @@ main() {
         tagPageId: tagPageContents,
       };
 
-      var settings = new TavernSettings(siteUrl: 'http://foo.com', sitemapPath: '/sitemap.xml');
+      var settings = new TavernSettings(
+          siteUrl: 'http://foo.com', sitemapPath: '/sitemap.xml');
 
       // Run barback
-      var t = new TestCase(
-          [new TagIndex(settings), new TagPages(settings)], assets);
+      var t = new TestCase([new TagPages(settings)], assets);
       var barback = await t.run();
 
       // Check the output file contents
       var outputAssets = await barback.getAllAssets();
-      expect(outputAssets, hasLength(6));
+      expect(outputAssets, hasLength(5));
 
       // Verify the tag page was created.
       var tagPage = outputAssets
@@ -215,7 +225,8 @@ main() {
         indexId: indexContents,
       };
 
-      var settings = new TavernSettings(siteUrl: 'http://foo.com', sitemapPath: 'sitemap.xml');
+      var settings = new TavernSettings(
+          siteUrl: 'http://foo.com', sitemapPath: 'sitemap.xml');
 
       // Run barback
       var t = new TestCase([new Sitemap(settings)], assets);
@@ -237,7 +248,6 @@ main() {
   });
 
   group('TagPageUrlGenerator', () {
-
     test('stripIndexHtml: false', () {
       var generator = new TagPageUrlGenerator('/tags/{{tag}}.html');
       var result = generator.getUrl('hello');
