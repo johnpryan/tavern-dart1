@@ -13,7 +13,7 @@ A static site generator for blogs, written in Dart.
 - [x] Support for tags and a tag index page.
 - [x] Compatibility with dart2js
 - [x] Compatibility with other Dart transformers (e.g. Polymer, SASS)
-- [ ] Support for including a tag list in any page
+- [x] Support for including a tag list in any page
 - [ ] Base URL configuration (similar to [how it works in Jekyll][1])
 - [ ] Site, post, and template generation tool
 - [ ] Support for configuring post metadata in a separate YAML file
