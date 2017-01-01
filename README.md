@@ -3,7 +3,7 @@
     <img src="logo.png"></img>
 </p>
 
-![travis ci build](https://travis-ci.org/johnpryan/tavern.svg)
+[![Build Status](https://travis-ci.org/johnpryan/tavern.svg?branch=master)](https://travis-ci.org/johnpryan/tavern)
 
 A static site generator for blogs, written in Dart.
 
