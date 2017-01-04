@@ -11,7 +11,7 @@ class Markdown extends Transformer {
   Future apply(Transform transform) async {
     var content = await transform.primaryInput.readAsString();
     var id = transform.primaryInput.id.changeExtension(".html");
-    var newContent = markdownToHtml(content);
+    var newContent = markdownToHtml(content, extensionSet: ExtensionSet.gitHub);
     transform.consumePrimary();
     transform.addOutput(new Asset.fromString(id, newContent));
   }
