@@ -1,6 +1,6 @@
 
 <p align="center">
-    <img src="logo.png"></img>
+    <img src="https://raw.githubusercontent.com/johnpryan/tavern/master/logo.png"></img>
 </p>
 
 [![Build Status](https://travis-ci.org/johnpryan/tavern.svg?branch=master)](https://travis-ci.org/johnpryan/tavern)
